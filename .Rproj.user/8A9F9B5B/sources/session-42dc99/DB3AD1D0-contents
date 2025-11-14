@@ -436,7 +436,7 @@ mar.9shared <- rblimp(
   print_output = 'all')
 
 #save(mar.9shared, file = "mar9shared.R")
-load(file = "mar9shared.R")
+load(file = "C:\\Users\\Amanda Montoya\\OneDrive - University of California\\Consulting\\Ramos\\MindUs Intervention\\mar9shared.R")
 
 # reshape data to long format
 mar.9shared_implist <- lapply(mar.9shared@imputations, (function(x) 
