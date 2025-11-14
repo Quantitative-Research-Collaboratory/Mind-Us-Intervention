@@ -1,0 +1,32 @@
+library(shiny)
+
+ui <- fixedPage(
+  titlePanel("Mean and Sample SD Calculator"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      textInput("nums", "Enter numbers seperated by commas")
+    ),
+    
+    mainPanel(
+      textOutput("mean_text"),
+      textOutput("sd_text")
+    )
+  )
+)
+
+server <- function(input, output) {
+  
+  
+  output$mean_text <- renderText({
+    nums <- scan(text = input$nums, what = numeric(), sep = ",", quiet = TRUE)
+    paste("Mean:", round(mean(nums, na.rm = TRUE), 2))
+  })
+  
+  output$sd_text <- renderText({
+    nums <- scan(text = input$nums, what = numeric(), sep = ",", quiet = TRUE)
+    paste("SD:", round(sd(nums, na.rm = TRUE), 2))
+  })
+}
+
+shinyApp(ui = ui, server = server)
