@@ -16,10 +16,10 @@ sds <- matrix (nrow = 20, ncol = ncol(imputeddat[[1]]))
 sds0 <- matrix(nrow = 20, ncol = ncol(imputeddat[[1]]))
 sds1 <- matrix(nrow = 20, ncol = ncol(imputeddat[[1]]))
 for (i in 1:20){
-  temp <- filter(imputeddat[[i]], Group == 0)
+  temp <- dplyr::filter(imputeddat[[i]], Group == 0)
   means0[i,] <- t(describe(temp)$mean)
   sds0[i,] <- t(describe(temp)$sd)
-  temp <- filter(imputeddat[[i]], Group == 1)
+  temp <- dplyr::filter(imputeddat[[i]], Group == 1)
   means1[i,] <- t(describe(temp)$mean)
   sds1[i,] <- t(describe(temp)$sd)
   means[i,] <- t(describe(imputeddat[[i]])$mean)
@@ -135,6 +135,236 @@ str_post_trt <- lapply(imputeddat, function(x) lm(PSS_2~factor(Group, levels = c
 summary(str_post_trt_pool <- pool(str_post_trt))
 
 
+# BEAQ
+beaq.graph <- data.frame(matrix(nrow = 6))
+beaq.graph$Cond <- factor(c("Treatment","Control","Treatment","Control","Treatment","Control"))
+beaq.graph$Time <- factor(c("Pre", "Pre", "Mid", "Mid", "Post", "Post"), levels = c("Pre", "Mid", "Post"))
+
+
+# BEAQ Baseline Treatment
+beaq_pre_trt <- lapply(imputeddat, function(x) lm(BEAQ_0~factor(Group, levels = c("1", "0")),x))
+beaq.graph$Est[1] <- summary(beaq_pre_trt_pool <- pool(beaq_pre_trt))$estimate[1]
+beaq.graph$SE[1] <- summary(beaq_pre_trt_pool <- pool(beaq_pre_trt))$std.error[1]
+beaq.graph$df[1] <- summary(beaq_pre_trt_pool <- pool(beaq_pre_trt))$df[1]
+
+# BEAQ Baseline Control
+beaq_pre_cont <- lapply(imputeddat, function(x) lm(BEAQ_0~Group,x))
+beaq.graph$Est[2] <- summary(beaq_pre_cont_pool <- pool(beaq_pre_cont))$estimate[1]
+beaq.graph$SE[2] <- summary(beaq_pre_cont_pool <- pool(beaq_pre_cont))$std.error[1]
+beaq.graph$df[2] <- summary(beaq_pre_cont_pool <- pool(beaq_pre_cont))$df[1]
+
+# BEAQ Midtreatment Treatment
+beaq_mid_trt <- lapply(imputeddat, function(x) lm(BEAQ_1~factor(Group, levels = c("1", "0")),x))
+beaq.graph$Est[3] <- summary(beaq_mid_trt_pool <- pool(beaq_mid_trt))$estimate[1]
+beaq.graph$SE[3] <- summary(beaq_mid_trt_pool <- pool(beaq_mid_trt))$std.error[1]
+beaq.graph$df[3] <- summary(beaq_mid_trt_pool <- pool(beaq_mid_trt))$df[1]
+
+# BEAQ Midtreatment Control
+beaq_mid_cont <- lapply(imputeddat, function(x) lm(BEAQ_1~Group,x))
+beaq.graph$Est[4] <- summary(beaq_mid_cont_pool <- pool(beaq_mid_cont))$estimate[1]
+beaq.graph$SE[4] <- summary(beaq_mid_cont_pool <- pool(beaq_mid_cont))$std.error[1]
+beaq.graph$df[4] <- summary(beaq_mid_cont_pool <- pool(beaq_mid_cont))$df[1]
+
+# BEAQ Posttreatment Treatment
+beaq_post_trt <- lapply(imputeddat, function(x) lm(BEAQ_2~factor(Group, levels = c("1", "0")),x))
+beaq.graph$Est[5] <- summary(beaq_post_trt_pool <- pool(beaq_post_trt))$estimate[1]
+beaq.graph$SE[5] <- summary(beaq_post_trt_pool <- pool(beaq_post_trt))$std.error[1]
+beaq.graph$df[5] <- summary(beaq_post_trt_pool <- pool(beaq_post_trt))$df[1]
+
+
+# BEAQ Posttreatment Control
+beaq_post_cont <- lapply(imputeddat, function(x) lm(BEAQ_2~Group,x))
+beaq.graph$Est[6] <- summary(beaq_post_cont_pool <- pool(beaq_post_cont))$estimate[1]
+beaq.graph$SE[6] <- summary(beaq_post_cont_pool <- pool(beaq_post_cont))$std.error[1]
+beaq.graph$df[6] <- summary(beaq_post_cont_pool <- pool(beaq_post_cont))$df[1]
+
+beaq.graph$CI.low <- beaq.graph$Est - beaq.graph$SE*qt(0.975,beaq.graph$df)
+beaq.graph$CI.high <- beaq.graph$Est + beaq.graph$SE*qt(0.975,beaq.graph$df)
+
+
+# MAAS (Mindfulness) Create data for plot
+maas.graph <- data.frame(matrix(nrow = 6))
+maas.graph$Cond <- factor(c("Treatment","Control","Treatment","Control","Treatment","Control"))
+maas.graph$Time <- factor(c("Pre", "Pre", "Mid", "Mid", "Post", "Post"), levels = c("Pre", "Mid", "Post"))
+
+
+# maas Baseline Treatment
+maas_pre_trt <- lapply(imputeddat, function(x) lm(MAAS_0~factor(Group, levels = c("1", "0")),x))
+maas.graph$Est[1] <- summary(maas_pre_trt_pool <- pool(maas_pre_trt))$estimate[1]
+maas.graph$SE[1] <- summary(maas_pre_trt_pool <- pool(maas_pre_trt))$std.error[1]
+maas.graph$df[1] <- summary(maas_pre_trt_pool <- pool(maas_pre_trt))$df[1]
+
+# maas Baseline Control
+maas_pre_cont <- lapply(imputeddat, function(x) lm(MAAS_0~Group,x))
+maas.graph$Est[2] <- summary(maas_pre_cont_pool <- pool(maas_pre_cont))$estimate[1]
+maas.graph$SE[2] <- summary(maas_pre_cont_pool <- pool(maas_pre_cont))$std.error[1]
+maas.graph$df[2] <- summary(maas_pre_cont_pool <- pool(maas_pre_cont))$df[1]
+
+# maas Midtreatment Treatment
+maas_mid_trt <- lapply(imputeddat, function(x) lm(MAAS_1~factor(Group, levels = c("1", "0")),x))
+maas.graph$Est[3] <- summary(maas_mid_trt_pool <- pool(maas_mid_trt))$estimate[1]
+maas.graph$SE[3] <- summary(maas_mid_trt_pool <- pool(maas_mid_trt))$std.error[1]
+maas.graph$df[3] <- summary(maas_mid_trt_pool <- pool(maas_mid_trt))$df[1]
+
+# maas Midtreatment Control
+maas_mid_cont <- lapply(imputeddat, function(x) lm(MAAS_1~Group,x))
+maas.graph$Est[4] <- summary(maas_mid_cont_pool <- pool(maas_mid_cont))$estimate[1]
+maas.graph$SE[4] <- summary(maas_mid_cont_pool <- pool(maas_mid_cont))$std.error[1]
+maas.graph$df[4] <- summary(maas_mid_cont_pool <- pool(maas_mid_cont))$df[1]
+
+# maas Posttreatment Treatment
+maas_post_trt <- lapply(imputeddat, function(x) lm(MAAS_2~factor(Group, levels = c("1", "0")),x))
+maas.graph$Est[5] <- summary(maas_post_trt_pool <- pool(maas_post_trt))$estimate[1]
+maas.graph$SE[5] <- summary(maas_post_trt_pool <- pool(maas_post_trt))$std.error[1]
+maas.graph$df[5] <- summary(maas_post_trt_pool <- pool(maas_post_trt))$df[1]
+
+
+# maas Posttreatment Control
+maas_post_cont <- lapply(imputeddat, function(x) lm(MAAS_2~Group,x))
+maas.graph$Est[6] <- summary(maas_post_cont_pool <- pool(maas_post_cont))$estimate[1]
+maas.graph$SE[6] <- summary(maas_post_cont_pool <- pool(maas_post_cont))$std.error[1]
+maas.graph$df[6] <- summary(maas_post_cont_pool <- pool(maas_post_cont))$df[1]
+
+maas.graph$CI.low <- maas.graph$Est - maas.graph$SE*qt(0.975,maas.graph$df)
+maas.graph$CI.high <- maas.graph$Est + maas.graph$SE*qt(0.975,maas.graph$df)
+
+# SCSSF (Self-Compassion) Create data for plot
+scssf.graph <- data.frame(matrix(nrow = 6))
+scssf.graph$Cond <- factor(c("Treatment","Control","Treatment","Control","Treatment","Control"))
+scssf.graph$Time <- factor(c("Pre", "Pre", "Mid", "Mid", "Post", "Post"), levels = c("Pre", "Mid", "Post"))
+
+# scssf Baseline Treatment
+scssf_pre_trt <- lapply(imputeddat, function(x) lm(SCSSF_0~factor(Group, levels = c("1", "0")),x))
+scssf.graph$Est[1] <- summary(scssf_pre_trt_pool <- pool(scssf_pre_trt))$estimate[1]
+scssf.graph$SE[1] <- summary(scssf_pre_trt_pool <- pool(scssf_pre_trt))$std.error[1]
+scssf.graph$df[1] <- summary(scssf_pre_trt_pool <- pool(scssf_pre_trt))$df[1]
+
+# scssf Baseline Control
+scssf_pre_cont <- lapply(imputeddat, function(x) lm(SCSSF_0~Group,x))
+scssf.graph$Est[2] <- summary(scssf_pre_cont_pool <- pool(scssf_pre_cont))$estimate[1]
+scssf.graph$SE[2] <- summary(scssf_pre_cont_pool <- pool(scssf_pre_cont))$std.error[1]
+scssf.graph$df[2] <- summary(scssf_pre_cont_pool <- pool(scssf_pre_cont))$df[1]
+
+# scssf Midtreatment Treatment
+scssf_mid_trt <- lapply(imputeddat, function(x) lm(SCSSF_1~factor(Group, levels = c("1", "0")),x))
+scssf.graph$Est[3] <- summary(scssf_mid_trt_pool <- pool(scssf_mid_trt))$estimate[1]
+scssf.graph$SE[3] <- summary(scssf_mid_trt_pool <- pool(scssf_mid_trt))$std.error[1]
+scssf.graph$df[3] <- summary(scssf_mid_trt_pool <- pool(scssf_mid_trt))$df[1]
+
+# scssf Midtreatment Control
+scssf_mid_cont <- lapply(imputeddat, function(x) lm(SCSSF_1~Group,x))
+scssf.graph$Est[4] <- summary(scssf_mid_cont_pool <- pool(scssf_mid_cont))$estimate[1]
+scssf.graph$SE[4] <- summary(scssf_mid_cont_pool <- pool(scssf_mid_cont))$std.error[1]
+scssf.graph$df[4] <- summary(scssf_mid_cont_pool <- pool(scssf_mid_cont))$df[1]
+
+# scssf Posttreatment Treatment
+scssf_post_trt <- lapply(imputeddat, function(x) lm(SCSSF_2~factor(Group, levels = c("1", "0")),x))
+scssf.graph$Est[5] <- summary(scssf_post_trt_pool <- pool(scssf_post_trt))$estimate[1]
+scssf.graph$SE[5] <- summary(scssf_post_trt_pool <- pool(scssf_post_trt))$std.error[1]
+scssf.graph$df[5] <- summary(scssf_post_trt_pool <- pool(scssf_post_trt))$df[1]
+
+
+# scssf Posttreatment Control
+scssf_post_cont <- lapply(imputeddat, function(x) lm(SCSSF_2~Group,x))
+scssf.graph$Est[6] <- summary(scssf_post_cont_pool <- pool(scssf_post_cont))$estimate[1]
+scssf.graph$SE[6] <- summary(scssf_post_cont_pool <- pool(scssf_post_cont))$std.error[1]
+scssf.graph$df[6] <- summary(scssf_post_cont_pool <- pool(scssf_post_cont))$df[1]
+
+scssf.graph$CI.low <- scssf.graph$Est - scssf.graph$SE*qt(0.975,scssf.graph$df)
+scssf.graph$CI.high <- scssf.graph$Est + scssf.graph$SE*qt(0.975,scssf.graph$df)
+
+# RRS (Rumination) Create data for plot
+rrs.graph <- data.frame(matrix(nrow = 6))
+rrs.graph$Cond <- factor(c("Treatment","Control","Treatment","Control","Treatment","Control"))
+rrs.graph$Time <- factor(c("Pre", "Pre", "Mid", "Mid", "Post", "Post"), levels = c("Pre", "Mid", "Post"))
+
+# rrs Baseline Treatment
+rrs_pre_trt <- lapply(imputeddat, function(x) lm(RRS_0~factor(Group, levels = c("1", "0")),x))
+rrs.graph$Est[1] <- summary(rrs_pre_trt_pool <- pool(rrs_pre_trt))$estimate[1]
+rrs.graph$SE[1] <- summary(rrs_pre_trt_pool <- pool(rrs_pre_trt))$std.error[1]
+rrs.graph$df[1] <- summary(rrs_pre_trt_pool <- pool(rrs_pre_trt))$df[1]
+
+# rrs Baseline Control
+rrs_pre_cont <- lapply(imputeddat, function(x) lm(RRS_0~Group,x))
+rrs.graph$Est[2] <- summary(rrs_pre_cont_pool <- pool(rrs_pre_cont))$estimate[1]
+rrs.graph$SE[2] <- summary(rrs_pre_cont_pool <- pool(rrs_pre_cont))$std.error[1]
+rrs.graph$df[2] <- summary(rrs_pre_cont_pool <- pool(rrs_pre_cont))$df[1]
+
+# rrs Midtreatment Treatment
+rrs_mid_trt <- lapply(imputeddat, function(x) lm(RRS_1~factor(Group, levels = c("1", "0")),x))
+rrs.graph$Est[3] <- summary(rrs_mid_trt_pool <- pool(rrs_mid_trt))$estimate[1]
+rrs.graph$SE[3] <- summary(rrs_mid_trt_pool <- pool(rrs_mid_trt))$std.error[1]
+rrs.graph$df[3] <- summary(rrs_mid_trt_pool <- pool(rrs_mid_trt))$df[1]
+
+# rrs Midtreatment Control
+rrs_mid_cont <- lapply(imputeddat, function(x) lm(RRS_1~Group,x))
+rrs.graph$Est[4] <- summary(rrs_mid_cont_pool <- pool(rrs_mid_cont))$estimate[1]
+rrs.graph$SE[4] <- summary(rrs_mid_cont_pool <- pool(rrs_mid_cont))$std.error[1]
+rrs.graph$df[4] <- summary(rrs_mid_cont_pool <- pool(rrs_mid_cont))$df[1]
+
+# rrs Posttreatment Treatment
+rrs_post_trt <- lapply(imputeddat, function(x) lm(RRS_2~factor(Group, levels = c("1", "0")),x))
+rrs.graph$Est[5] <- summary(rrs_post_trt_pool <- pool(rrs_post_trt))$estimate[1]
+rrs.graph$SE[5] <- summary(rrs_post_trt_pool <- pool(rrs_post_trt))$std.error[1]
+rrs.graph$df[5] <- summary(rrs_post_trt_pool <- pool(rrs_post_trt))$df[1]
+
+
+# rrs Posttreatment Control
+rrs_post_cont <- lapply(imputeddat, function(x) lm(RRS_2~Group,x))
+rrs.graph$Est[6] <- summary(rrs_post_cont_pool <- pool(rrs_post_cont))$estimate[1]
+rrs.graph$SE[6] <- summary(rrs_post_cont_pool <- pool(rrs_post_cont))$std.error[1]
+rrs.graph$df[6] <- summary(rrs_post_cont_pool <- pool(rrs_post_cont))$df[1]
+
+rrs.graph$CI.low <- rrs.graph$Est - rrs.graph$SE*qt(0.975,rrs.graph$df)
+rrs.graph$CI.high <- rrs.graph$Est + rrs.graph$SE*qt(0.975,rrs.graph$df)
+
+# ERQ_ES (Emotional Suppression) Create data for plot
+erq.es.graph <- data.frame(matrix(nrow = 6))
+erq.es.graph$Cond <- factor(c("Treatment","Control","Treatment","Control","Treatment","Control"))
+erq.es.graph$Time <- factor(c("Pre", "Pre", "Mid", "Mid", "Post", "Post"), levels = c("Pre", "Mid", "Post"))
+
+# erq.es Baseline Treatment
+erq.es_pre_trt <- lapply(imputeddat, function(x) lm(ERQ_ES_0~factor(Group, levels = c("1", "0")),x))
+erq.es.graph$Est[1] <- summary(erq.es_pre_trt_pool <- pool(erq.es_pre_trt))$estimate[1]
+erq.es.graph$SE[1] <- summary(erq.es_pre_trt_pool <- pool(erq.es_pre_trt))$std.error[1]
+erq.es.graph$df[1] <- summary(erq.es_pre_trt_pool <- pool(erq.es_pre_trt))$df[1]
+
+# erq.es Baseline Control
+erq.es_pre_cont <- lapply(imputeddat, function(x) lm(ERQ_ES_0~Group,x))
+erq.es.graph$Est[2] <- summary(erq.es_pre_cont_pool <- pool(erq.es_pre_cont))$estimate[1]
+erq.es.graph$SE[2] <- summary(erq.es_pre_cont_pool <- pool(erq.es_pre_cont))$std.error[1]
+erq.es.graph$df[2] <- summary(erq.es_pre_cont_pool <- pool(erq.es_pre_cont))$df[1]
+
+# erq.es Midtreatment Treatment
+erq.es_mid_trt <- lapply(imputeddat, function(x) lm(ERQ_ES_1~factor(Group, levels = c("1", "0")),x))
+erq.es.graph$Est[3] <- summary(erq.es_mid_trt_pool <- pool(erq.es_mid_trt))$estimate[1]
+erq.es.graph$SE[3] <- summary(erq.es_mid_trt_pool <- pool(erq.es_mid_trt))$std.error[1]
+erq.es.graph$df[3] <- summary(erq.es_mid_trt_pool <- pool(erq.es_mid_trt))$df[1]
+
+# erq.es Midtreatment Control
+erq.es_mid_cont <- lapply(imputeddat, function(x) lm(ERQ_ES_1~Group,x))
+erq.es.graph$Est[4] <- summary(erq.es_mid_cont_pool <- pool(erq.es_mid_cont))$estimate[1]
+erq.es.graph$SE[4] <- summary(erq.es_mid_cont_pool <- pool(erq.es_mid_cont))$std.error[1]
+erq.es.graph$df[4] <- summary(erq.es_mid_cont_pool <- pool(erq.es_mid_cont))$df[1]
+
+# erq.es Posttreatment Treatment
+erq.es_post_trt <- lapply(imputeddat, function(x) lm(ERQ_ES_2~factor(Group, levels = c("1", "0")),x))
+erq.es.graph$Est[5] <- summary(erq.es_post_trt_pool <- pool(erq.es_post_trt))$estimate[1]
+erq.es.graph$SE[5] <- summary(erq.es_post_trt_pool <- pool(erq.es_post_trt))$std.error[1]
+erq.es.graph$df[5] <- summary(erq.es_post_trt_pool <- pool(erq.es_post_trt))$df[1]
+
+
+# erq.es Posttreatment Control
+erq.es_post_cont <- lapply(imputeddat, function(x) lm(ERQ_ES_2~Group,x))
+erq.es.graph$Est[6] <- summary(erq.es_post_cont_pool <- pool(erq.es_post_cont))$estimate[1]
+erq.es.graph$SE[6] <- summary(erq.es_post_cont_pool <- pool(erq.es_post_cont))$std.error[1]
+erq.es.graph$df[6] <- summary(erq.es_post_cont_pool <- pool(erq.es_post_cont))$df[1]
+
+erq.es.graph$CI.low <- erq.es.graph$Est - erq.es.graph$SE*qt(0.975,erq.es.graph$df)
+erq.es.graph$CI.high <- erq.es.graph$Est + erq.es.graph$SE*qt(0.975,erq.es.graph$df)
+
+
+# Depression Graph Create Dataframe
 dep.graph <- data.frame(matrix(nrow = 6))
 dep.graph$Cond <- factor(c("Treatment","Control","Treatment","Control","Treatment","Control"))
 dep.graph$Time <- c("Pre", "Pre", "Mid", "Mid", "Post", "Post")
@@ -205,3 +435,91 @@ str.plot <- ggplot(str.graph, aes(x = Time, y = Est, color = Cond, group = Cond)
   theme(legend.position = "right")
 
 ggsave("str_changeplot_mi.svg", plot = str.plot)
+
+# Create BEAQ (Experiential Avoidance) Plot
+beaq.plot <- ggplot(beaq.graph, aes(x = Time, y = Est, color = Cond, group = Cond)) +
+  geom_line(linewidth = 1) +  # Line plot
+  geom_point(size = 3) +  # Points
+  geom_errorbar(aes(ymin = CI.low, ymax = CI.high), width = 0.5) + # Error bars
+  #scale_x_continuous(breaks = c(0, 4, 8, 12, 16), labels = c("Baseline", "4", "8", "12", "16")) +
+  scale_y_continuous(limits = c(40, 55)) +  # Adjust limits for y-axis
+  labs(x = "Time", y = "Experiential Avoidance (BEAQ)") +  # Axis labels
+  #scale_color_manual(values = c("0 (Control)" = "#1f77b4", "1 (Treatment)" = "#ff7f0e")) +  # Colors
+  theme_apa() +  # Clean theme
+  theme(legend.position = "right")
+
+beaq.plot
+
+ggsave("beaq_changeplot_mi.png", plot = beaq.plot)
+ggsave("beaq_changeplot_mi.svg", plot = beaq.plot)
+
+# Create MAAS (Mindfulness) Plot
+maas.plot <- ggplot(maas.graph, aes(x = Time, y = Est, color = Cond, group = Cond)) +
+  geom_line(linewidth = 1) +  # Line plot
+  geom_point(size = 3) +  # Points
+  geom_errorbar(aes(ymin = CI.low, ymax = CI.high), width = 0.5) + # Error bars
+  #scale_x_continuous(breaks = c(0, 4, 8, 12, 16), labels = c("Baseline", "4", "8", "12", "16")) +
+  scale_y_continuous(limits = c(45, 65)) +  # Adjust limits for y-axis
+  labs(x = "Time", y = "Mindfulness (MAAS)") +  # Axis labels
+  #scale_color_manual(values = c("0 (Control)" = "#1f77b4", "1 (Treatment)" = "#ff7f0e")) +  # Colors
+  theme_apa() +  # Clean theme
+  theme(legend.position = "right")
+
+maas.plot
+
+ggsave("maas_changeplot_mi.png", plot = maas.plot)
+ggsave("maas_changeplot_mi.svg", plot = maas.plot)
+
+# Create SCSSF (Self-Compassion) Plot
+scssf.plot <- ggplot(scssf.graph, aes(x = Time, y = Est, color = Cond, group = Cond)) +
+  geom_line(linewidth = 1) +  # Line plot
+  geom_point(size = 3) +  # Points
+  geom_errorbar(aes(ymin = CI.low, ymax = CI.high), width = 0.5) + # Error bars
+  #scale_x_continuous(breaks = c(0, 4, 8, 12, 16), labels = c("Baseline", "4", "8", "12", "16")) +
+  scale_y_continuous(limits = c(28, 40)) +  # Adjust limits for y-axis
+  labs(x = "Time", y = "Self-Compassion (SCSSF)") +  # Axis labels
+  #scale_color_manual(values = c("0 (Control)" = "#1f77b4", "1 (Treatment)" = "#ff7f0e")) +  # Colors
+  theme_apa() +  # Clean theme
+  theme(legend.position = "right")
+
+scssf.plot
+
+ggsave("scssf_changeplot_mi.png", plot = scssf.plot)
+ggsave("scssf_changeplot_mi.svg", plot = scssf.plot)
+
+# Create RRS (Rumination) Plot
+rrs.plot <- ggplot(rrs.graph, aes(x = Time, y = Est, color = Cond, group = Cond)) +
+  geom_line(linewidth = 1) +  # Line plot
+  geom_point(size = 3) +  # Points
+  geom_errorbar(aes(ymin = CI.low, ymax = CI.high), width = 0.5) + # Error bars
+  #scale_x_continuous(breaks = c(0, 4, 8, 12, 16), labels = c("Baseline", "4", "8", "12", "16")) +
+  scale_y_continuous(limits = c(8, 15)) +  # Adjust limits for y-axis
+  labs(x = "Time", y = "Rumination (RRS)") +  # Axis labels
+  #scale_color_manual(values = c("0 (Control)" = "#1f77b4", "1 (Treatment)" = "#ff7f0e")) +  # Colors
+  theme_apa() +  # Clean theme
+  theme(legend.position = "right")
+
+rrs.plot
+
+ggsave("rrs_changeplot_mi.png", plot = rrs.plot)
+ggsave("rrs_changeplot_mi.svg", plot = rrs.plot)
+
+
+# Create ERQ_ES (Emotion Suppression) Plot
+erq.es.plot <- ggplot(erq.es.graph, aes(x = Time, y = Est, color = Cond, group = Cond)) +
+  geom_line(linewidth = 1) +  # Line plot
+  geom_point(size = 3) +  # Points
+  geom_errorbar(aes(ymin = CI.low, ymax = CI.high), width = 0.5) + # Error bars
+  #scale_x_continuous(breaks = c(0, 4, 8, 12, 16), labels = c("Baseline", "4", "8", "12", "16")) +
+  scale_y_continuous(limits = c(12, 18)) +  # Adjust limits for y-axis
+  labs(x = "Time", y = "Emotional Suppression (ERQ-ES)") +  # Axis labels
+  #scale_color_manual(values = c("0 (Control)" = "#1f77b4", "1 (Treatment)" = "#ff7f0e")) +  # Colors
+  theme_apa() +  # Clean theme
+  theme(legend.position = "right")
+
+erq.es.plot
+
+ggsave("erq.es_changeplot_mi.png", plot = erq.es.plot)
+ggsave("erq.es_changeplot_mi.svg", plot = erq.es.plot)
+
+
