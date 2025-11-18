@@ -469,6 +469,56 @@ erq.es.graph$df[6] <- erq.es.post.cont.sum$df[1]
 erq.es.graph$CI.low <- erq.es.graph$Est - erq.es.graph$SE*qt(0.975,erq.es.graph$df)
 erq.es.graph$CI.high <- erq.es.graph$Est + erq.es.graph$SE*qt(0.975,erq.es.graph$df)
 
+# ERQ_CR (Cognitive Reappraisal) Create data for plot
+erq.cr.graph <- data.frame(matrix(nrow = 6))
+erq.cr.graph$Cond <- factor(c("Treatment","Control","Treatment","Control","Treatment","Control"))
+erq.cr.graph$Time <- factor(c("Pre", "Pre", "Mid", "Mid", "Post", "Post"), levels = c("Pre", "Mid", "Post"))
+
+# erq.cr Baseline Treatment
+erq.cr_pre_trt <- lapply(imputeddat, function(x) lm(ERQ_CR_0~factor(Group, levels = c("1", "0")),x))
+erq.cr.pre.trt.sum <- summary(erq.cr_pre_trt_pool <- pool(erq.cr_pre_trt))
+erq.cr.graph$Est[1] <- erq.cr.pre.trt.sum$estimate[1]
+erq.cr.graph$SE[1] <- erq.cr.pre.trt.sum$std.error[1]
+erq.cr.graph$df[1] <- erq.cr.pre.trt.sum$df[1]
+
+# erq.cr Baseline Control
+erq.cr_pre_cont <- lapply(imputeddat, function(x) lm(ERQ_CR_0~Group,x))
+erq.cr.pre.cont <- summary(erq.cr_pre_cont_pool <- pool(erq.cr_pre_cont))
+erq.cr.graph$Est[2] <- erq.cr.pre.cont$estimate[1]
+erq.cr.graph$SE[2] <- erq.cr.pre.cont$std.error[1]
+erq.cr.graph$df[2] <- erq.cr.pre.cont$df[1]
+
+# erq.cr Midtreatment Treatment
+erq.cr_mid_trt <- lapply(imputeddat, function(x) lm(ERQ_CR_1~factor(Group, levels = c("1", "0")),x))
+erq.cr.mid.trt.sum <- summary(erq.cr_mid_trt_pool <- pool(erq.cr_mid_trt))
+erq.cr.graph$Est[3] <- erq.cr.mid.trt.sum$estimate[1]
+erq.cr.graph$SE[3] <- erq.cr.mid.trt.sum$std.error[1]
+erq.cr.graph$df[3] <- erq.cr.mid.trt.sum$df[1]
+
+# erq.cr Midtreatment Control
+erq.cr_mid_cont <- lapply(imputeddat, function(x) lm(ERQ_CR_1~Group,x))
+erq.cr.mid.cont.sum <- summary(erq.cr_mid_cont_pool <- pool(erq.cr_mid_cont))
+erq.cr.graph$Est[4] <- erq.cr.mid.cont.sum$estimate[1]
+erq.cr.graph$SE[4] <- erq.cr.mid.cont.sum$std.error[1]
+erq.cr.graph$df[4] <- erq.cr.mid.cont.sum$df[1]
+
+# erq.cr Posttreatment Treatment
+erq.cr_post_trt <- lapply(imputeddat, function(x) lm(ERQ_CR_2~factor(Group, levels = c("1", "0")),x))
+erq.cr.post.trt <- summary(erq.cr_post_trt_pool <- pool(erq.cr_post_trt))
+erq.cr.graph$Est[5] <- erq.cr.post.trt$estimate[1]
+erq.cr.graph$SE[5] <- erq.cr.post.trt$std.error[1]
+erq.cr.graph$df[5] <- erq.cr.post.trt$df[1]
+
+# erq.cr Posttreatment Control
+erq.cr_post_cont <- lapply(imputeddat, function(x) lm(ERQ_CR_2~Group,x))
+erq.cr.post.cont.sum <- summary(erq.cr_post_cont_pool <- pool(erq.cr_post_cont))
+erq.cr.graph$Est[6] <- erq.cr.post.cont.sum$estimate[1]
+erq.cr.graph$SE[6] <- erq.cr.post.cont.sum$std.error[1]
+erq.cr.graph$df[6] <- erq.cr.post.cont.sum$df[1]
+
+erq.cr.graph$CI.low <- erq.cr.graph$Est - erq.cr.graph$SE*qt(0.975,erq.cr.graph$df)
+erq.cr.graph$CI.high <- erq.cr.graph$Est + erq.cr.graph$SE*qt(0.975,erq.cr.graph$df)
+
 
 # Depression: Create the plot
 dep.plot <- ggplot(dep.graph, aes(x = Time, y = Est, color = Cond, group = Cond)) +
@@ -601,5 +651,23 @@ erq.es.plot
 
 ggsave("erq.es_changeplot_mi.png", plot = erq.es.plot)
 ggsave("erq.es_changeplot_mi.svg", plot = erq.es.plot)
+
+# Create ERQ_CR (Cognitive Reappraisal) Plot
+erq.cr.plot <- ggplot(erq.cr.graph, aes(x = Time, y = Est, color = Cond, group = Cond)) +
+  geom_line(linewidth = 1) +  # Line plot
+  geom_point(size = 3) +  # Points
+  geom_errorbar(aes(ymin = CI.low, ymax = CI.high), width = 0.5) + # Error bars
+  #scale_x_continuous(breaks = c(0, 4, 8, 12, 16), labels = c("Baseline", "4", "8", "12", "16")) +
+  scale_y_continuous(limits = c(24,32)) +  # Adjust limits for y-axis
+  labs(x = "Time", y = "Cognitive Reappraisal (ERQ-CR)") +  # Axis labels
+  #scale_color_manual(values = c("0 (Control)" = "#1f77b4", "1 (Treatment)" = "#ff7f0e")) +  # Colors
+  theme_apa() +  # Clean theme
+  theme(legend.position = "right")
+
+erq.cr.plot
+
+ggsave("erq.cr_changeplot_mi.png", plot = erq.cr.plot)
+ggsave("erq.cr_changeplot_mi.svg", plot = erq.cr.plot)
+
 
 
