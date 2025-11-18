@@ -3,7 +3,7 @@
     "path": "C:/Users/Amanda Kay Montoya/OneDrive - University of California/Consulting/Ramos/MindUs Intervention/Mind-Us-Analysis-git/Descriptives_Imputed.R",
     "project_path": "Descriptives_Imputed.R",
     "type": "r_source",
-    "hash": "3513378464",
+    "hash": "2587248856",
     "contents": "",
     "dirty": false,
     "created": 1763146047712.0,
@@ -12,16 +12,16 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "523,0",
-        "scrollLine": "503",
+        "cursorPosition": "70,0",
+        "scrollLine": "62",
         "docOutlineVisible": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1763159376,
+    "lastKnownWriteTime": 1763490610,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1763159376121,
+    "last_content_update": 1763490610055,
     "read_only": false,
     "read_only_alternatives": []
 }
