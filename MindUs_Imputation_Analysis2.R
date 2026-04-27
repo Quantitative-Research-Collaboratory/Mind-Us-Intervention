@@ -436,7 +436,7 @@ mar.9shared <- rblimp(
   print_output = 'all')
 
 #save(mar.9shared, file = "mar9shared.R")
-load(file = "mar9shared.R")
+load(file = "C:\\Users\\Amanda Kay Montoya\\OneDrive - University of California\\Consulting\\Ramos\\MindUs Intervention\\mar9shared.R")
 
 # reshape data to long format
 mar.9shared_implist <- lapply(mar.9shared@imputations, (function(x) 
@@ -657,6 +657,7 @@ mar.1shared <- rblimp(
   print_output = 'all')
 
 #save(mar.1shared, file = "mar1shared.R")
+# This is the model used in the JMIR Mind-Us Paper
 load(file = "mar1shared.R")
 
 # reshape data to long format
@@ -710,6 +711,7 @@ str.mar.1shared <- with(mar.1shared_implist,
                             random = ~ 1 | id, 
                             correlation = corAR1(form = ~ 1 | id)))
 testEstimates(str.mar.1shared, extra.pars = T)
+
 confint(testEstimates(str.mar.1shared, extra.pars = T))
 
 str.mar.1shared2 <- with(mar.1shared_implist, 
